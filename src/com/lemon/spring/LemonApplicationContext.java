@@ -13,11 +13,12 @@ public class LemonApplicationContext {
     private Class configClass;
 
     private ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Object> singletonObjects = new ConcurrentHashMap<>();
 
     public LemonApplicationContext(Class configClass) {
         this.configClass = configClass;
 
-        //扫描
+        //扫描 --->BeanDefinition -->beanDefinitionMap
         if (configClass.isAnnotationPresent(ComponentScan.class)) {
 
             ComponentScan componentScanAnnotation = (ComponentScan) configClass.getAnnotation(ComponentScan.class);
@@ -85,9 +86,40 @@ public class LemonApplicationContext {
             }
         }
 
+        //实例化单例bean
+        for (String beanName : beanDefinitionMap.keySet()) {
+            BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+            if (beanDefinition.getScope().equals("singleton")) {
+                Object bean = createBean(beanName, beanDefinition);
+                singletonObjects.put(beanName, bean);
+            }
+        }
+
+    }
+
+    private Object createBean(String beanName, BeanDefinition beanDefinition) {
+        return null;
     }
 
     public Object getBean(String beanName) {
-        return null;
+
+        BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+        if (beanDefinition == null) {
+            throw new NullPointerException();
+        } else {
+            String scope = beanDefinition.getScope();
+            if ("singleton".equals(scope)) {
+                Object bean = singletonObjects.get(beanName);
+                if (bean == null) {
+                    Object bean1 = createBean(beanName, beanDefinition);
+                    singletonObjects.put(beanName, bean1);
+                }
+                return bean;
+            } else {
+                //多例
+                return createBean(beanName, beanDefinition);
+            }
+        }
+
     }
 }
