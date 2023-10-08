@@ -8,6 +8,6 @@ import com.lemon.spring.Scope;
  */
 
 @Component("userService")
-@Scope("prototype")
+@Scope("singleton")
 public class UserService {
 }

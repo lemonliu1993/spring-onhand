@@ -2,6 +2,7 @@ package com.lemon.spring;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -98,7 +99,22 @@ public class LemonApplicationContext {
     }
 
     private Object createBean(String beanName, BeanDefinition beanDefinition) {
-        return null;
+        Class clazz = beanDefinition.getType();
+        Object instance = null;
+        try {
+            instance = clazz.getConstructor().newInstance();
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        return instance;
     }
 
     public Object getBean(String beanName) {
