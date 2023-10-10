@@ -1,5 +1,6 @@
 package com.lemon.service;
 
+import com.lemon.spring.Autowired;
 import com.lemon.spring.Component;
 import com.lemon.spring.Scope;
 
@@ -8,6 +9,12 @@ import com.lemon.spring.Scope;
  */
 
 @Component("userService")
-@Scope("singleton")
 public class UserService {
+
+    @Autowired
+    private OrderService orderService;
+
+    public void test() {
+        System.out.println(orderService);
+    }
 }

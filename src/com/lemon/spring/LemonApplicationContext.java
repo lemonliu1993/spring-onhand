@@ -3,6 +3,7 @@ package com.lemon.spring;
 import java.beans.Introspector;
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
@@ -107,6 +108,14 @@ public class LemonApplicationContext {
         Object instance = null;
         try {
             instance = clazz.getConstructor().newInstance();
+
+            //依赖注入
+            for (Field f : clazz.getDeclaredFields()) {
+                if (f.isAnnotationPresent(Autowired.class)) {
+                    f.setAccessible(true);
+                    f.set(instance, getBean(f.getName()));
+                }
+            }
 
         } catch (InstantiationException e) {
             e.printStackTrace();
