@@ -1,5 +1,6 @@
 package com.lemon.spring;
 
+import java.beans.Introspector;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -62,6 +63,9 @@ public class LemonApplicationContext {
                                 String beanName = component.value();
 
                                 //Bean
+                                if (beanName.equals("")) {
+                                    beanName = Introspector.decapitalize(clazz.getSimpleName());
+                                }
 
                                 BeanDefinition beanDefinition = new BeanDefinition();
                                 beanDefinition.setType(clazz);
